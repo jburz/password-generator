@@ -11,24 +11,56 @@ function writePassword() {
 
 }
 
-//Function to generate password
+//Function to generate the password
+function generatePassword() {
+  var passLength = 0;
+
+  //Error check for upper and lower bound on password length
+  do {
+    passLength = prompt("Please choose a password length between 8 and 128 characters")
+  }
+  while (passLength < 8 || passLength > 128);
+
+  //Define character types object and set bool to false and strings to define characters
+  var charTypes = {
+    lower: false,
+    lowerStr: 'abcdefghijklmnopqrstuvwxyz',
+    upper: false,
+    upperStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    nums: false,
+    numsStr: '1234567890',
+    special: false,
+    specialStr: ' !"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~',
+  }
 
 
-//Prompt for password length and character type
+  //Error check to make sure user selects at least one type of character
+  do {
+    charTypes.lower = confirm("Would you like lowercase letters used?");
+    charTypes.upper = confirm("Would you like uppercase letters used?");
+    charTypes.nums = confirm("Would you like numbers used?");
+    charTypes.special = confirm("Would you like special characters used?");
 
+    if (charTypes.lower === false && charTypes.upper === false && charTypes.nums === false && charTypes.special === false) {
+      alert("You must select at least one type of character for your password");
+    }
+  } while (charTypes.lower === false && charTypes.upper === false && charTypes.nums === false && charTypes.special === false);
 
-//Error checking for upper and lower length bounds and and least one character type selected
+  //Logic to generate password
 
+  //set character type arrays
 
-//Generate random characters for each character type selected - how to decide how many of each character type?
+  var lowerArr = ['a']
+  console.log(charTypes.lower);
+  console.log(charTypes.upper);
+  console.log(charTypes.nums);
+  console.log(charTypes.special);
+  console.log(charTypes.specialStr.length);
+  console.log(charTypes.numsStr.length);
+  console.log(charTypes.upperStr.length);
+  console.log(charTypes.lowerStr.length);
 
-
-//Concatenate all characters in a random order - need array of characters
-
-
-//Output array as string
-
-  
+  return "Generating your password....";
 }
 
 // Add event listener to generate button
