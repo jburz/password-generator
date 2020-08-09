@@ -1,6 +1,5 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
-console.log(generateBtn);
 
 // Write password to the #password input
 function writePassword() {
@@ -13,92 +12,89 @@ function writePassword() {
 
 //Function to generate the password
 function generatePassword() {
-var passLength = 0;
-  //Error check for upper and lower bound on password length
+  var passLength = 0;
+  //Error check to make sure password is between 8 and 128 characters
   do {
     passLength = prompt("Please choose a password length between 8 and 128 characters")
   }
   while (passLength < 8 || passLength > 128);
 
-  //Define character types object and set bool to false and strings to define characters
-  var charTypes = {
-    lowerUsed: false,
-    lowerStr: 'abcdefghijklmnopqrstuvwxyz',
-    lowerCharCtr: 0,
-    upperUsed: false,
-    upperStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    upperCharCtr: 0,
-    numsUsed: false,
-    numsStr: '1234567890',
-    numsCharCtr: 0,
-    specialUsed: false,
-    specialStr: ' !"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~',
-    specialCharCtr: 0,
-  }
+  //Variable to count remaining characters for random character generator
+  var unusedChars = passLength;
 
+  //Define character types and strings for prompts, initialize array for character types used (boolean) and character types added to new array
+  var charTypes = ['abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', '1234567890', '!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~'];
+  var charTypesPrompt = ['lower case letters', 'upper case letters', 'numbers', 'special characters'];
+  var charTypesUsed = [];
+  var charTypesAdded = [];
 
   //Error check to make sure user selects at least one type of character
   do {
-    charTypes.lowerUsed = confirm("Would you like lowercase letters used?");
-    charTypes.upperUsed = confirm("Would you like uppercase letters used?");
-    charTypes.numsUsed = confirm("Would you like numbers used?");
-    charTypes.specialUsed = confirm("Would you like special characters used?");
+    for (var i = 0; i < charTypesPrompt.length; i++) {
+      charTypesUsed[i] = confirm("Would you like to use " + charTypesPrompt[i] + "?");
+    }
 
-    if (charTypes.lowerUsed === false && charTypes.upperUsed === false && charTypes.numsUsed === false && charTypes.specialUsed === false) {
+    if (charTypesUsed[0] === false && charTypesUsed[1] === false && charTypesUsed[2] === false && charTypesUsed[3] === false) {
       alert("You must select at least one type of character for your password");
     }
-  } while (charTypes.lowerUsed === false && charTypes.upperUsed === false && charTypes.numsUsed === false && charTypes.specialUsed === false);
+  } while (charTypesUsed[0] === false && charTypesUsed[1] === false && charTypesUsed[2] === false && charTypesUsed[3] === false);
 
-  //Logic to generate password
-
-  //Logic to determine how many of each type of character will be used
-  //Set each character type to have at least one character in string if character type is used and increment total counter
-  var currentCharCtr = 0;
-  var charsLeft = passLength;
-  if (charTypes.lowerUsed === true) {
-    charTypes.lowerCharCtr = 1;
-    currentCharCtr++;
-  }
-  if (charTypes.upperUsed === true) {
-    charTypes.upperCharCtr = 1;
-    currentCharCtr++;
-  }
-  if (charTypes.numsUsed === true) {
-    charTypes.numsCharCtr = 1;
-    currentCharCtr++;
-  }
-  if (charTypes.specialUsed === true) {
-    charTypes.specialCharCtr = 1;
-    currentCharCtr++;
+  //remove unused character strings from the array
+  for (var i = 0; i < charTypes.length; i++) {
+    if (charTypesUsed[i]) {
+      charTypesAdded.push(charTypes[i]);
+    }
   }
 
-  charsLeft = charsLeft - currentCharCtr;
-  
-  //Get a random integer between two values that includes those values
-  function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+  //This algorithm generates a random number of characters for each character type selected in the prompts
+  //Determines how many character types we have left to iterate through
+  let counter = charTypesAdded.length - 1;
+
+  //Total character we can still generate
+  let charsRemaining = passLength;
+
+  //Characters we can generate in current character type
+  let ableToSelect = 0;
+
+  //Number of characters generated in current character type
+  let numChars = 0;
+
+  //Array to concatenate all character types generated
+  let concatChars = "";
+
+  //Get a random number of characters for each character type selected up to the last one in the array
+  for (var i = 0; i < charTypesAdded.length - 1; i++) {
+    ableToSelect = charsRemaining - counter;
+    counter--;
+    numChars = getRandomIntInclusive(1, ableToSelect);
+    charsRemaining -= numChars;
+
+    //Store random characters in the added character item equal to the randomly generated length
+    for (var j = 0; j < numChars; j++) {
+      concatChars = concatChars.concat(charTypesAdded[i][Math.floor(Math.random() * charTypesAdded[i].length)]);
+    }
   }
 
-  //Generate a random number of lowercase characters
-  getRandomIntInclusive(charTypes.lowerCharCtr,charsLeft);
+  //Generate characters in the final character type equal to the characters remaining
+  numChars = charsRemaining;
+  charsRemaining -= numChars;
+  for (var j = 0; j < numChars; j++) {
+    concatChars = concatChars.concat(charTypesAdded[charTypesAdded.length - 1][Math.floor(Math.random() * charTypesAdded[i].length)]);
+  }
 
-  //Generate random character from each character type
-  var lowerRand = Math.floor(Math.random() * charTypes.lowerStr.length);
-  var upperRand = Math.floor(Math.random() * charTypes.upperStr.length);
-  var numsRand = Math.floor(Math.random() * charTypes.numsStr.length);
-  var specialRand = Math.floor(Math.random() * charTypes.specialStr.length);
+  //shuffle the final character string
+  var shuffled = concatChars.split('').sort(function() {
+    return 0.5-Math.random();
+  }).join('');
 
-  console.log(charTypes.lowerStr[lowerRand]);
-  console.log(charTypes.upperStr[upperRand]);
-  console.log(charTypes.numsStr[numsRand]);
-  console.log(charTypes.specialStr[specialRand]);
-  console.log(totalCharCtr);
-  
+  return shuffled;
+}
 
-
-  return "Generating your password....";
+//Get a random integer between two values that includes those values
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
 }
 
 // Add event listener to generate button
